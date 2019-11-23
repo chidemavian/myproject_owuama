@@ -1,0 +1,177 @@
+{% extends 'geo/base.html' %}
+{% block sectionTitle %}Student Registration{% endblock %}
+{% block content %}
+
+        <form id="form1" action="/geo/settlement/" method="post" enctype="multipart/form-data" onsubmit="disable(this)">
+
+            <table style="width: 100%; borde:0.8px solid black;text-align: left; vertical-align: text-top" >
+               
+                <tr >
+                    <td colspan="4"  style="background-color: brown;color:#ffffff;text-align:center;" > Settlement</td>
+                </tr>
+             <tr >
+                    <td colspan="4"  style="background-color: #ffffff;color:#ffffff;text-align:center;" > End Bearing Capacity</td>
+                </tr>
+<table width="100%" class="table  table-bordered" id="dataTables-example">
+                <tr >
+                    <td colspan="4"  style="background-color: #ccccc0;color:#000000;text-align:center;" > Standard Data</td>
+                </tr>
+                <tr>
+                    <td>{{ form.thick.label_tag }}</td>
+                    <td>{{ form.thick }}&nbsp;{{ form.thick.errors }}</td>
+                </tr>
+
+                <tr>
+                    <td colspan="4" class="sectionCaption" style="background-color: #ccccc0;color:#000000;text-align:center;">Laboratory Data</td>
+                </tr>
+                <tr>
+                    <td>{{ form.unit.label_tag }}</td>
+                    <td>{{ form.unit }}&nbsp;{{ form.unit.errors }}</td>
+                    <td>{{ form.compression.label_tag }}</td>
+                    <td>{{ form.compression }}&nbsp;{{ form.compression.errors }}</td>
+                 </tr>
+                 <tr><td>{{ form.void.label_tag }}</td>
+                    <td>{{ form.void }}&nbsp;{{ form.void.errors }}</td>
+                </tr>
+                    <td colspan="4" class="sectionCaption" style="background-color: #ccccc0;color:#000000;text-align:center;">Iteration Values</td>
+                </tr>
+                <tr>
+                    <td>{{ form.d.label_tag }}: Start (d)</td>
+                    <td>{{ form.d }}&nbsp;{{ form.d.errors }}</td>
+                    <td>{{ form.off1.label_tag }}</td>
+                    <td>{{ form.off1 }}&nbsp;{{ form.subclass }}&nbsp;{{ form.admitted_arm.errors }}</td>
+                </tr>
+                 <tr>
+                    <td>{{ form.pressure.label_tag }}: Start</td>
+                    <td>{{ form.pressure }}&nbsp;{{ form.pressure.errors }}</td>
+                    <td>{{ form.off2.label_tag }}</td>
+                    <td>{{ form.off2 }}&nbsp;{{ form.subclass }}&nbsp;{{ form.admitted_arm.errors }}</td>
+                </tr>
+                <table style="margin-top:0%;margin-bottom:0%" width="100%" class="table  table-bordered table-hover" id="dataTables-example">
+
+                     <td ><input class="btn btn-lg btn-success btn-block" name="submit" type= "submit" value=":: Calculate S ::"></td>
+                </table>
+            </table>
+        </form>
+
+
+    <script>
+    $(document).ready(function() {
+        var pickerOpts = {
+            //appendText: "mm/dd/yy",
+            //defaultDate: "+5",
+            showOtherMonths: true,
+            changeMonth: true,
+            changeYear: true,
+            dateFormat:"yy-mm-dd"
+            //showButtonPanel: true
+            // showOn: "button"
+        };
+        $("#id_birth_date").datepicker(pickerOpts);
+        //$("#id_dateofresum").datepicker(pickerOpts);
+        $("#id_thick").focus();
+        //$("id_birth_date").attr('disable','True');
+
+        getLGAs();
+        subclass()
+
+    });
+    </script>
+    <script type="text/javascript" language="javascript">
+        function getLGAs(){
+            var state = $("#id_state_of_origin").val() ;
+            //alert(state);
+            var url = "/student/ajaxlga/";
+            var i = 0;
+            var data='userid='+state;
+            $("#id_lga").val('');
+            $("#id_lga").html('');
+            if (state != undefined){
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data:data,
+                    success: function(data){
+                        var options = '';
+                        for (i=0; i<data.length; i++){
+                            options += '<option value="' + data[i] +'">' + data[i] + '</option>'
+                        }
+                        $("#id_lga").append(options);
+                    }
+                })
+            }
+        }
+
+    </script>
+
+    <script type="text/javascript" language="javascript">
+        function admno(){
+            var state = $("#id_admitted_session").val() ;
+            //alert(state);
+            var url = "/student/admno/";
+            var i = 0;
+            var data='userid='+state;
+            $("#id_admissionno").val('');
+            $("#id_admissionno").html('');
+            if (state != undefined){
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data:data,
+                    success: function(data){
+                        var options = data;
+                        $("#id_admissionno").val(options) ;
+                    }
+                })
+            }
+        }
+
+    </script>
+    <script type="text/javascript" >
+        $(document).ready(function() {
+            $("#id_state_of_origin").change(function () {
+                getLGAs();
+            });
+            $("#id_admitted_class").change(function () {
+                subclass();
+            });
+        });
+    </script>
+    <script type="text/javascript" language="javascript">
+        function subclass(){
+            var state = $("#id_admitted_class").val() ;
+            //alert(state);
+            var p = state.charAt(0).toUpperCase();
+            //alert(p);
+            var url = "/student/subclass/";
+            var i = 0;
+            var data='userid='+p;
+            $("#id_subclass").val('');
+            $("#id_subclass").html('');
+            if (state != undefined){
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data:data,
+                    success: function(data){
+                        var options = '';
+                        for (i=0; i<data.length; i++){
+                            options += '<option value="' + data[i] +'">' + data[i] + '</option>'
+                        }
+                        $("#id_subclass").append(options);
+                    }
+                })
+            }
+        }
+
+    </script>
+    <script language="javascript" type="text/javascript">
+        function disable(f)
+        {
+            var button = f.elements['submit'];
+            button.value = 'Processing';
+            button.disabled = 'true';
+            return true;
+        }
+    </script>
+{% endblock %}

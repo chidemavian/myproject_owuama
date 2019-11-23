@@ -1,0 +1,29 @@
+
+
+
+   <table width="100%" class="table  table-bordered table-hover" id="dataTables-example">
+                           
+                            <tr style='font-weight:bold;text-align:center' >
+                                <td >S/N</td>
+                                <td >Subject</td>
+                                <td >Assessment</td>
+                                <td >Class</td>
+                                <td>Status</td>
+                                <td>Status</td>               
+                            </tr>                    
+                            {% for k in sub %}
+                                <tr style='text-align:center'>
+                                    <td >{{ forloop.counter }}.</td>
+                                    <td >{{ k.subject }}</td> 
+                                    <td >{{ k.exam_type}}</td>  
+                                    <td >{{ k.klass }}</td>
+                                    <td >{{ k.status }}</td>
+                                    <td >Delete</td>                                    
+                                </tr>
+                            {% endfor %}
+                
+
+
+    </table>
+
+ </table>
